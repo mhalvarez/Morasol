@@ -32,6 +32,15 @@ Public Class Form1
     Private m_Hotel As String
 
 
+    Private DS As System.Data.DataSet
+    Private DT As System.Data.DataTable
+    Private DR As System.Data.DataRow
+
+
+    Private MyCommand As System.Data.OleDb.OleDbDataAdapter
+    Private MyConnection As System.Data.OleDb.OleDbConnection
+
+
 
     Private Sub ButtonRutaExcel_Click(sender As Object, e As EventArgs) Handles ButtonRutaExcel.Click
 
@@ -107,13 +116,13 @@ Public Class Form1
     End Sub
     Private Sub LeeExcelReservas(ByVal vFileName As String, vHojaName As String)
         Try
-            Dim DS As System.Data.DataSet
-            Dim DT As System.Data.DataTable
-            Dim DR As System.Data.DataRow
+            '  Dim DS As System.Data.DataSet
+            '  Dim DT As System.Data.DataTable
+            '  Dim DR As System.Data.DataRow
 
 
-            Dim MyCommand As System.Data.OleDb.OleDbDataAdapter
-            Dim MyConnection As System.Data.OleDb.OleDbConnection
+            '  Dim MyCommand As System.Data.OleDb.OleDbDataAdapter
+            '  Dim MyConnection As System.Data.OleDb.OleDbConnection
             Dim StrConexion As String
 
             Dim Ind As Integer
@@ -220,20 +229,15 @@ Public Class Form1
 
 
                 If DR(11).ToString.Length > 0 Then
-                    '    T = TimeSpan.FromDays(DR(11))
-                    '   r_Hllegada = T.ToString
-                    r_Hllegada = Convert.ToDateTime(DR(11))
 
+                    r_Hllegada = Format(CDate(r_Llegada), "dd/MM/yyyy") & " " & Format(CDate(DR(11)), "H:mm")
                 Else
                     r_Hllegada = ""
                 End If
 
 
                 If DR(12).ToString.Length > 0 Then
-                    '  T = TimeSpan.FromDays(DR(12))
-                    '  r_Hsalida = T.ToString
-                    r_Hsalida = Convert.ToDateTime(DR(12))
-
+                    r_Salida = Format(CDate(r_Salida), "dd/MM/yyyy") & " " & Format(CDate(DR(12)), "H:mm")
                 Else
                     r_Hsalida = ""
                 End If
@@ -328,7 +332,7 @@ Public Class Form1
                 SQL = " INSERT INTO TRESE ( "
                 SQL = SQL & "   TRESE_CODI, TRESE_ANCI,TRESE_DESGLOSE, TRESE_HOTEL, "
                 SQL = SQL & "   TRESE_DACR, TRESE_CLIE, TRESE_TTOO,TRESE_AGENCIA, "
-                SQL = SQL & "   TRESE_DAEN, TRESE_DASA,TNACI_CODI,TRESE_THABRESE,TRESE_THABOCUP,TRESE_TREG)  "
+                SQL = SQL & "   TRESE_DAEN, TRESE_DASA,TNACI_CODI,TRESE_THABRESE,TRESE_THABOCUP,TRESE_TREG,TRESE_NUAD,TRESE_NUCR,TRESE_NUIN,TRESE_NUCU)  "
                 SQL = SQL & "VALUES ("
                 SQL = SQL & r_Reserva & ","
                 SQL = SQL & r_Ejercicio & ","
@@ -343,7 +347,15 @@ Public Class Form1
                 SQL = SQL & r_Nacionalidad & "','"
                 SQL = SQL & r_TipoHabFra & "','"
                 SQL = SQL & r_TipoHabUso & "','"
-                SQL = SQL & r_TipoRegimen & "')"
+                SQL = SQL & r_TipoRegimen & "',"
+
+                SQL = SQL & r_Adultos & ","
+                SQL = SQL & r_Ninos & ","
+                SQL = SQL & r_Junior & ","
+                SQL = SQL & r_Cunas & ")"
+
+
+
 
 
                 Me.m_DBMORASOL.EjecutaSql(SQL)
@@ -353,7 +365,7 @@ Public Class Form1
                     Me.ListBoxDebug2.Items.Add(Me.m_DBMORASOL.StrError)
                     Me.mHayErrores = True
                     MessageBox.Show("Error de  Base de Datos" & vbCrLf & Me.m_DBMORASOL.StrError, "Atención", MessageBoxButtons.OK, MessageBoxIcon.Exclamation)
-                   ' Me.m_DBMORASOL.CancelaTransaccion()
+                    ' Me.m_DBMORASOL.CancelaTransaccion()
                     Exit For
 
                 Else
@@ -392,7 +404,7 @@ Public Class Form1
                     LineaGraba += Format(CDate(r_Llegada), "dd/MM/yyyy")
 
                     If r_Hllegada.Length > 0 Then
-                            Me.m_AuxStr = Format(CDate(r_Llegada), "dd/MM/yyyy") & " " & Format(CDate(r_Hllegada), "HH:mm")
+                        Me.m_AuxStr = Format(CDate(r_Llegada), "dd/MM/yyyy") & " " & Format(CDate(r_Hllegada), "HH:mm")
                         LineaGraba += Me.m_AuxStr
                     Else
                         LineaGraba += "                "
@@ -478,6 +490,12 @@ Public Class Form1
             End If
 
         Catch ex As Exception
+
+            DS.Dispose()
+            MyConnection.Close()
+            Filegraba.Close()
+
+            Me.m_DBMORASOL.CancelaTransaccion()
             MsgBox(ex.Message)
         Finally
 
