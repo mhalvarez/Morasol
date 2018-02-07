@@ -275,10 +275,12 @@ Partial Class Form1
         '
         'ListBoxEquivalencias
         '
+        Me.ListBoxEquivalencias.Font = New System.Drawing.Font("Courier New", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.ListBoxEquivalencias.FormattingEnabled = True
+        Me.ListBoxEquivalencias.ItemHeight = 14
         Me.ListBoxEquivalencias.Location = New System.Drawing.Point(6, 33)
         Me.ListBoxEquivalencias.Name = "ListBoxEquivalencias"
-        Me.ListBoxEquivalencias.Size = New System.Drawing.Size(722, 160)
+        Me.ListBoxEquivalencias.Size = New System.Drawing.Size(722, 158)
         Me.ListBoxEquivalencias.TabIndex = 0
         '
         'TabPageCardex

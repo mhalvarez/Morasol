@@ -583,33 +583,48 @@ Public Class Form1
                 ' 
 
 
+                ' Verifica si ya existe 
+
+                SQL = "SELECT COUNT(*) FROM TENTIDADES WHERE "
+                SQL += " HOTEL = " & "'" & r_Hotel & "'"
+                SQL += " AND TTOO  = " & "'" & r_TtoName & "'"
+                SQL += " AND AGENCIA  = " & "'" & r_Agencia & "'"
+                SQL += " AND CLIENTE  = " & "'" & r_Cliente & "'"
+
+                Me.m_ResultStr = Me.m_DBMORASOL.EjecutaSqlScalar(SQL)
 
 
+                If CInt(Me.m_ResultStr) = 0 Then
+                    ' inserta oracle
+                    SQL = " INSERT INTO TENTIDADES ( "
+                    SQL = SQL & "   HOTEL,TTOO,AGENCIA,CLIENTE )"
+
+                    SQL = SQL & "VALUES ('"
+                    SQL = SQL & r_Hotel & "','"
+                    SQL = SQL & r_TtoName & "','"
+                    SQL = SQL & r_Agencia & "','"
+                    SQL = SQL & r_Cliente & "')"
 
 
+                    Me.m_DBMORASOL.EjecutaSql(SQL)
+                    If Me.m_DBMORASOL.HayError Then
+                        Me.ListBoxDebug2.Items.Add(SQL)
+                        Me.ListBoxDebug2.Items.Add(Me.m_DBMORASOL.StrError)
+                        Me.mHayErrores = True
+                        MessageBox.Show("Error de  Base de Datos" & vbCrLf & Me.m_DBMORASOL.StrError, "Atención", MessageBoxButtons.OK, MessageBoxIcon.Exclamation)
 
-                ' inserta oracle
-                SQL = " INSERT INTO TENTIDADES ( "
-                SQL = SQL & "   HOTEL,TTOO,AGENCIA,CLIENTE )"
-
-                SQL = SQL & "VALUES ('"
-                SQL = SQL & r_Hotel & "','"
-                SQL = SQL & r_TtoName & "','"
-                SQL = SQL & r_Agencia & "','"
-                SQL = SQL & r_Cliente & "')"
-
-
-
-                Me.m_DBMORASOL.EjecutaSql(SQL)
-                If Me.m_DBMORASOL.HayError Then
-                    Me.ListBoxDebug2.Items.Add(SQL)
-                    Me.ListBoxDebug2.Items.Add(Me.m_DBMORASOL.StrError)
-                    Me.mHayErrores = True
-                    MessageBox.Show("Error de  Base de Datos" & vbCrLf & Me.m_DBMORASOL.StrError, "Atención", MessageBoxButtons.OK, MessageBoxIcon.Exclamation)
-
-                    Exit For
+                        Exit For
+                    Else
+                        Me.ListBoxEquivalencias.Items.Add(r_Hotel.PadRight(15, " ") & " " & r_TtoName.PadRight(20, " ") & " " & r_Cliente.PadRight(20, " "))
+                    End If
 
                 End If
+
+
+
+
+
+
 
 
                 Me.TextBoxregistrosTratados.Text = Ind
